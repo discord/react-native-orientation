@@ -1,11 +1,44 @@
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+repositories {
+    google()
+    mavenCentral()
+}
+
+buildscript {
+    ext.kotlin_version = '1.6.0'
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        //noinspection GradleDynamicVersion
+        classpath 'com.android.tools.build:gradle:4+'
+        //noinspection GradleDynamicVersion,DifferentKotlinGradleVersion
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1+"
+    }
+}
+
 apply plugin: 'com.android.library'
+apply plugin: 'kotlin-android'
+
+def _ext = rootProject.ext
+
+def _compileSdkVersion = _ext.has('compileSdkVersion') ? _ext.compileSdkVersion : 31
+def _minSdkVersion = _ext.has('minSdkVersion') ? _ext.minSdkVersion : 16
+def _targetSdkVersion = _ext.has('targetSdkVersion') ? _ext.targetSdkVersion : 31
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion _compileSdkVersion
 
     defaultConfig {
-        minSdkVersion 16
-        targetSdkVersion 31
+        minSdkVersion _minSdkVersion
+        targetSdkVersion _targetSdkVersion
         versionCode 1
         versionName "1.0"
         ndk {
@@ -17,4 +50,5 @@ android {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
