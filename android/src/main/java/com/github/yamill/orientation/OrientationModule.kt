@@ -14,6 +14,21 @@ import com.github.yamill.orientation.listeners.OrientationConfigListener
 class OrientationModule(reactContext: ReactApplicationContext) :
     ReactContextBaseJavaModule(reactContext) {
 
+    private enum class LockState(val orientationInt: Int) {
+        LOCKED_PORTRAIT(
+            orientationInt = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT),
+        LOCKED_LANDSCAPE(
+            orientationInt = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE),
+        LOCKED_LANDSCAPE_LEFT(
+            orientationInt = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE),
+        LOCKED_LANDSCAPE_RIGHT(
+            orientationInt = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE),
+        UNLOCKED(
+            orientationInt = ActivityInfo.SCREEN_ORIENTATION_SENSOR),
+    }
+
+    private var lockState: LockState? = null
+
     private var autoRotateEnabled = false
     private var autoRotateIgnored = false
 
@@ -29,8 +44,7 @@ class OrientationModule(reactContext: ReactApplicationContext) :
     init {
         reactContext.addLifecycleEventListener(
             OrientationAutoRotateListener(reactContext) { autoRotateEnabled ->
-                this.autoRotateEnabled = autoRotateEnabled
-                this.maybeLockToPortrait()
+                updateOrientation(autoRotateEnabled = autoRotateEnabled)
             }
         )
         reactContext.addLifecycleEventListener(
@@ -45,7 +59,7 @@ class OrientationModule(reactContext: ReactApplicationContext) :
     fun getOrientation(callback: Callback) {
         val orientationInt = reactApplicationContext.resources.configuration.orientation
         val orientation = getOrientationString(orientationInt)
-        if (orientation === "null") {
+        if (orientation == null) {
             callback.invoke(orientationInt, null)
         } else {
             callback.invoke(null, orientation)
@@ -55,55 +69,70 @@ class OrientationModule(reactContext: ReactApplicationContext) :
     @Suppress("unused")
     @ReactMethod
     fun ignoreAutoRotate(ignoreAutoRotate: Boolean) {
-        this.autoRotateIgnored = ignoreAutoRotate
-        this.maybeLockToPortrait()
+        updateOrientation(autoRotateIgnored = ignoreAutoRotate)
     }
 
     @SuppressLint("SourceLockedOrientationActivity")
     @Suppress("unused")
     @ReactMethod
     fun lockToPortrait() {
-        currentActivity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+        updateOrientation(lockState = LockState.LOCKED_PORTRAIT)
     }
 
     @Suppress("unused")
     @ReactMethod
     fun lockToLandscape() {
-        if (autoRotateEnabled || autoRotateIgnored) {
-            currentActivity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE
-        }
+        updateOrientation(lockState = LockState.LOCKED_LANDSCAPE)
     }
 
     @Suppress("unused")
     @ReactMethod
     fun lockToLandscapeLeft() {
-        if (autoRotateEnabled || autoRotateIgnored) {
-            currentActivity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE
-        }
+        updateOrientation(lockState = LockState.LOCKED_LANDSCAPE_LEFT)
     }
 
     @Suppress("unused")
     @ReactMethod
     fun lockToLandscapeRight() {
-        if (autoRotateEnabled || autoRotateIgnored) {
-            currentActivity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE
-        }
+        updateOrientation(lockState = LockState.LOCKED_LANDSCAPE_RIGHT)
     }
 
     @Suppress("unused")
     @ReactMethod
     fun unlockAllOrientations() {
-        if (autoRotateEnabled || autoRotateIgnored) {
-            currentActivity?.requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_SENSOR
-        }
+        updateOrientation(lockState = LockState.UNLOCKED)
     }
 
-    private fun maybeLockToPortrait() {
-        if (autoRotateEnabled || autoRotateIgnored) {
+    private fun updateOrientation(
+        lockState: LockState? = this.lockState,
+        autoRotateEnabled: Boolean = this.autoRotateEnabled,
+        autoRotateIgnored: Boolean = this.autoRotateIgnored,
+    ) {
+        if (this.lockState == lockState &&
+            this.autoRotateEnabled == autoRotateEnabled &&
+            this.autoRotateIgnored == autoRotateIgnored) {
+            return
+        } else {
+            this.lockState = lockState
+            this.autoRotateEnabled = autoRotateEnabled
+            this.autoRotateIgnored = autoRotateIgnored
+        }
+
+        if (lockState == null) {
             return
         }
 
-        lockToPortrait()
+        // When enabled set to last requested orientation.
+        val autoRotationEnabled = autoRotateEnabled || autoRotateIgnored
+        if (autoRotationEnabled) {
+            currentActivity?.requestedOrientation = lockState.orientationInt
+        }
+
+        // When disabled ensure we are locked to portrait.
+        val autoRotationDisabled = !autoRotateEnabled && !autoRotateIgnored
+        if  (autoRotationDisabled && lockState != LockState.LOCKED_PORTRAIT) {
+            currentActivity?.requestedOrientation = LockState.LOCKED_PORTRAIT.orientationInt
+        }
     }
 
     private fun getOrientationString(orientation: Int) =
