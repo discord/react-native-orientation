@@ -32,6 +32,7 @@ def _ext = rootProject.ext
 def _compileSdkVersion = _ext.has('compileSdkVersion') ? _ext.compileSdkVersion : 31
 def _minSdkVersion = _ext.has('minSdkVersion') ? _ext.minSdkVersion : 16
 def _targetSdkVersion = _ext.has('targetSdkVersion') ? _ext.targetSdkVersion : 31
+def _kotlinVersion = _ext.has('kotlinVersion') ? _ext.kotlinVersion : "1.5.10"
 
 android {
     compileSdkVersion _compileSdkVersion
@@ -50,5 +51,5 @@ android {
 dependencies {
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$_kotlinVersion"
 }
