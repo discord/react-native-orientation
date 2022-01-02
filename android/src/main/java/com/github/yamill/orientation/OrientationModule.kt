@@ -25,6 +25,9 @@ class OrientationModule(reactContext: ReactApplicationContext) :
             orientationInt = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE),
         UNLOCKED(
             orientationInt = ActivityInfo.SCREEN_ORIENTATION_SENSOR),
+        UNSPECIFIED(
+            orientationInt = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED,
+        ),
     }
 
     private var lockState: LockState? = null
@@ -128,10 +131,10 @@ class OrientationModule(reactContext: ReactApplicationContext) :
             currentActivity?.requestedOrientation = lockState.orientationInt
         }
 
-        // When disabled ensure we are locked to portrait.
+        // When disabled ensure we are unspecified.
         val autoRotationDisabled = !autoRotateEnabled && !autoRotateIgnored
-        if  (autoRotationDisabled && lockState != LockState.LOCKED_PORTRAIT) {
-            currentActivity?.requestedOrientation = LockState.LOCKED_PORTRAIT.orientationInt
+        if  (autoRotationDisabled && lockState != LockState.UNSPECIFIED) {
+            currentActivity?.requestedOrientation = LockState.UNSPECIFIED.orientationInt
         }
     }
 
