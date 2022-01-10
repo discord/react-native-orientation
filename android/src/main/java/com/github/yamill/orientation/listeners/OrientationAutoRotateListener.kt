@@ -36,7 +36,7 @@ internal class OrientationAutoRotateListener(
         observer = null
     }
 
-    override fun onHostDestroy() {}
+    override fun onHostDestroy() = Unit
 
     private fun createContentObserver() = object : ContentObserver(Handler(Looper.myLooper()!!)) {
 

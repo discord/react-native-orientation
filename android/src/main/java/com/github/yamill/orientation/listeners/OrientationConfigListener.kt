@@ -29,7 +29,7 @@ class OrientationConfigListener internal constructor(
             }
             val params = Arguments.createMap()
             params.putString("orientation", orientationValue)
-            if (reactContext.hasActiveCatalystInstance()) {
+            if (reactContext.hasActiveReactInstance()) {
                 reactContext
                     .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
                     .emit("orientationDidChange", params)
@@ -59,7 +59,7 @@ class OrientationConfigListener internal constructor(
         }
     }
 
-    override fun onHostDestroy() {}
+    override fun onHostDestroy() = Unit
 
     companion object {
 
