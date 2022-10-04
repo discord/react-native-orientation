@@ -9,10 +9,11 @@
 #else
 #import "RCTBridgeModule.h"
 #endif
+#import <UIKit/UIKit.h>
 
 @interface Orientation : NSObject <RCTBridgeModule>
 + (void)setOrientation: (UIInterfaceOrientationMask)orientation;
 + (void)setOrientation: (UIInterfaceOrientationMask)orientation;
-+ (void)updateInterfaceOrientation: (UIInterfaceOrientation)orientation;
++ (void)updateInterfaceOrientation: (UIInterfaceOrientation)orientation withOrientationMask: (UIInterfaceOrientationMask) orientationMask;
 + (UIInterfaceOrientationMask)getOrientation;
 @end
