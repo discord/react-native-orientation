@@ -8,7 +8,7 @@
 #else
 #import "RCTEventDispatcher.h"
 #endif
-#import <UIKit/UIKit.h>
+#import <UIKitCore/UIWindowSceneGeometryPreferencesIOS.h>
 
 @implementation Orientation
 @synthesize bridge = _bridge;
@@ -23,7 +23,6 @@ static UIInterfaceOrientationMask _orientation = UIInterfaceOrientationMaskAllBu
 
 - (void)updateInterfaceOrientation: (UIInterfaceOrientation)orientation withOrientationMask: (UIInterfaceOrientationMask) orientationMask
 {
-  
   [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
     if (@available(iOS 16.0, *)) {
 
@@ -52,19 +51,10 @@ static UIInterfaceOrientationMask _orientation = UIInterfaceOrientationMaskAllBu
       } else {
         // TODO: reject a promise, and log an error in JS.
       }
-      
-      
-      
-  //    UIWindow *window = [[UIApplication sharedApplication] keyWindow];
-  //    UIWindowScene *windowScene = [window windowScene];
-//      if (windowScene != nil) {
-//        [windowScene]
-//      }
     } else {
       [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
       [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: orientation] forKey:@"orientation"];
     }
-    
   }];
 }
 
@@ -247,7 +237,7 @@ RCT_EXPORT_METHOD(lockToLandscapeRight)
   UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskLandscapeLeft;
     [Orientation setOrientation:UIInterfaceOrientationMaskLandscapeLeft];
 //    [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
-  [self updateInterfaceOrientation: UIInterfaceOrientationLandscapeLeft withOrientationMask:orientation];
+  [self updateInterfaceOrientation: UIInterfaceOrientationLandscapeLeft withOrientationMask:orientationMask];
 //        [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
 //        [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: UIInterfaceOrientationLandscapeLeft] forKey:@"orientation"];
 //    }];
@@ -262,7 +252,7 @@ RCT_EXPORT_METHOD(lockToLandscapeLeft)
   UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskLandscapeRight;
   [Orientation setOrientation:orientationMask];
 //  [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
-  [self updateInterfaceOrientation:UIInterfaceOrientationLandscapeRight withOrientationMask:orientation];
+  [self updateInterfaceOrientation:UIInterfaceOrientationLandscapeRight withOrientationMask:orientationMask];
 //    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
 //    [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: UIInterfaceOrientationLandscapeRight] forKey:@"orientation"];
 //  }];

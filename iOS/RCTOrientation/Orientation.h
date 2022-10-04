@@ -9,7 +9,7 @@
 #else
 #import "RCTBridgeModule.h"
 #endif
-#import <UIKit/UIKit.h>
+#import <UIKitCore/UIWindowSceneGeometryPreferencesIOS.h>
 
 @interface Orientation : NSObject <RCTBridgeModule>
 + (void)setOrientation: (UIInterfaceOrientationMask)orientation;
