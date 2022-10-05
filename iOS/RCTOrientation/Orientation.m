@@ -201,7 +201,10 @@ RCT_EXPORT_METHOD(lockToPortrait:(RCTPromiseResolveBlock) resolve
   #endif
   UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskPortrait;
   [Orientation setOrientation:orientationMask];
-  [self updateInterfaceOrientation:UIInterfaceOrientationPortrait withOrientationMask:orientationMask];
+  [self updateInterfaceOrientation:UIInterfaceOrientationPortrait
+               withOrientationMask:orientationMask
+                           resolve:resolve
+                            reject:reject];
 }
 
 RCT_EXPORT_METHOD(lockToLandscape:(RCTPromiseResolveBlock) resolve
@@ -215,10 +218,16 @@ RCT_EXPORT_METHOD(lockToLandscape:(RCTPromiseResolveBlock) resolve
   UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskLandscape;
   if ([orientationStr isEqualToString:@"LANDSCAPE-LEFT"]) {
     [Orientation setOrientation:orientationMask];
-    [self updateInterfaceOrientation:UIInterfaceOrientationLandscapeRight withOrientationMask:orientationMask];
+    [self updateInterfaceOrientation:UIInterfaceOrientationLandscapeRight
+                 withOrientationMask:orientationMask
+                             resolve:resolve
+                              reject:reject];
   } else {
     [Orientation setOrientation:orientationMask];
-    [self updateInterfaceOrientation: UIInterfaceOrientationLandscapeLeft withOrientationMask:orientationMask];
+    [self updateInterfaceOrientation: UIInterfaceOrientationLandscapeLeft
+                 withOrientationMask:orientationMask
+                             resolve:resolve
+                              reject:reject];
   }
 }
 
@@ -230,7 +239,10 @@ RCT_EXPORT_METHOD(lockToLandscapeRight:(RCTPromiseResolveBlock) resolve
   #endif
   UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskLandscapeLeft;
   [Orientation setOrientation:UIInterfaceOrientationMaskLandscapeLeft];
-  [self updateInterfaceOrientation: UIInterfaceOrientationLandscapeLeft withOrientationMask:orientationMask];
+  [self updateInterfaceOrientation:UIInterfaceOrientationLandscapeLeft
+               withOrientationMask:orientationMask
+                           resolve:resolve
+                            reject:reject];
 }
 
 RCT_EXPORT_METHOD(lockToLandscapeLeft:(RCTPromiseResolveBlock) resolve
@@ -241,7 +253,10 @@ RCT_EXPORT_METHOD(lockToLandscapeLeft:(RCTPromiseResolveBlock) resolve
   #endif
   UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskLandscapeRight;
   [Orientation setOrientation:orientationMask];
-  [self updateInterfaceOrientation:UIInterfaceOrientationLandscapeRight withOrientationMask:orientationMask];
+  [self updateInterfaceOrientation:UIInterfaceOrientationLandscapeRight
+               withOrientationMask:orientationMask
+                           resolve:resolve
+                            reject:reject];
 }
 
 RCT_EXPORT_METHOD(unlockAllOrientations)
