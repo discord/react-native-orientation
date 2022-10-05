@@ -3,12 +3,12 @@
 //
 
 #import "Orientation.h"
+#import <UIKit/UIKit.h>
 #if __has_include(<React/RCTEventDispatcher.h>)
 #import <React/RCTEventDispatcher.h>
 #else
 #import "RCTEventDispatcher.h"
 #endif
-#import <UIKitCore/UIWindowSceneGeometryPreferencesIOS.h>
 
 @implementation Orientation
 @synthesize bridge = _bridge;
