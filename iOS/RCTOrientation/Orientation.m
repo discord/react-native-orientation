@@ -43,7 +43,7 @@ static UIInterfaceOrientationMask _orientation = UIInterfaceOrientationMaskAllBu
       }
       
       if (windowScene != nil) {
-        [windowScene requestGeometryUpdateWithPreferences: [UIWindowSceneGeometryPreferencesIOS initWithInterfaceOrientations:orientationMask]
+        [windowScene requestGeometryUpdateWithPreferences: [[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:orientationMask]
                                              errorHandler:^(NSError * _Nonnull error) {
           // TODO: reject a promise, and log an error in JS.
 
