@@ -197,11 +197,6 @@ RCT_EXPORT_METHOD(lockToPortrait)
   UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskPortrait;
   [Orientation setOrientation:orientationMask];
   [self updateInterfaceOrientation:UIInterfaceOrientationPortrait withOrientationMask:orientationMask];
-//  [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
-//    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-//    [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: UIInterfaceOrientationPortrait] forKey:@"orientation"];
-//  }];
-
 }
 
 RCT_EXPORT_METHOD(lockToLandscape)
@@ -214,18 +209,10 @@ RCT_EXPORT_METHOD(lockToLandscape)
   UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskLandscape;
   if ([orientationStr isEqualToString:@"LANDSCAPE-LEFT"]) {
     [Orientation setOrientation:orientationMask];
-//    [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
     [self updateInterfaceOrientation:UIInterfaceOrientationLandscapeRight withOrientationMask:orientationMask];
-//      [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-//      [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: UIInterfaceOrientationLandscapeRight] forKey:@"orientation"];
-//    }];
   } else {
     [Orientation setOrientation:orientationMask];
-//    [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
     [self updateInterfaceOrientation: UIInterfaceOrientationLandscapeLeft withOrientationMask:orientationMask];
-//      [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-//      [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: UIInterfaceOrientationLandscapeLeft] forKey:@"orientation"];
-//    }];
   }
 }
 
@@ -235,13 +222,8 @@ RCT_EXPORT_METHOD(lockToLandscapeRight)
     NSLog(@"Locked to Landscape Right");
   #endif
   UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskLandscapeLeft;
-    [Orientation setOrientation:UIInterfaceOrientationMaskLandscapeLeft];
-//    [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
+  [Orientation setOrientation:UIInterfaceOrientationMaskLandscapeLeft];
   [self updateInterfaceOrientation: UIInterfaceOrientationLandscapeLeft withOrientationMask:orientationMask];
-//        [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-//        [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: UIInterfaceOrientationLandscapeLeft] forKey:@"orientation"];
-//    }];
-
 }
 
 RCT_EXPORT_METHOD(lockToLandscapeLeft)
@@ -251,12 +233,7 @@ RCT_EXPORT_METHOD(lockToLandscapeLeft)
   #endif
   UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskLandscapeRight;
   [Orientation setOrientation:orientationMask];
-//  [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
   [self updateInterfaceOrientation:UIInterfaceOrientationLandscapeRight withOrientationMask:orientationMask];
-//    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-//    [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: UIInterfaceOrientationLandscapeRight] forKey:@"orientation"];
-//  }];
-
 }
 
 RCT_EXPORT_METHOD(unlockAllOrientations)
