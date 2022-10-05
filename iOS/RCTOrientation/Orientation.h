@@ -13,6 +13,9 @@
 @interface Orientation : NSObject <RCTBridgeModule>
 + (void)setOrientation: (UIInterfaceOrientationMask)orientation;
 + (void)setOrientation: (UIInterfaceOrientationMask)orientation;
-+ (void)updateInterfaceOrientation: (UIInterfaceOrientation)orientation withOrientationMask: (UIInterfaceOrientationMask) orientationMask;
++ (void)updateInterfaceOrientation: (UIInterfaceOrientation)orientation
+               withOrientationMask: (UIInterfaceOrientationMask) orientationMask
+                           resolve: (RCTPromiseResolveBlock) resolve
+                            reject: (RCTPromiseRejectBlock)reject;
 + (UIInterfaceOrientationMask)getOrientation;
 @end
