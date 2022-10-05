@@ -48,10 +48,10 @@ static UIInterfaceOrientationMask _orientation = UIInterfaceOrientationMaskAllBu
       if (windowScene != nil) {
         [windowScene requestGeometryUpdateWithPreferences: [[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:orientationMask]
                                              errorHandler:^(NSError * _Nonnull error) {
-          reject([error description]);
+          reject(@"err", [error description], nil);
         }];
       } else {
-        reject(@"unable to request geometry update because of nil WindowScene");
+        reject(@"err", @"unable to request geometry update because of nil WindowScene", nil);
       }
     } else {
       [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
