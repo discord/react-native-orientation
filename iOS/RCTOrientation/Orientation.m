@@ -28,7 +28,7 @@ static UIInterfaceOrientationMask _orientation = UIInterfaceOrientationMaskAllBu
 {
   [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
     if (@available(iOS 16.0, *)) {
-      [self updateInterfaceOrientationMask:orientationMask resolve:resolve reject:reject]
+      [self updateInterfaceOrientationMask:orientationMask resolve:resolve reject:reject];
     } else {
       [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
       [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: orientation] forKey:@"orientation"];
@@ -267,7 +267,7 @@ RCT_EXPORT_METHOD(lockToLandscapeLeft:(RCTPromiseResolveBlock) resolve
                             reject:reject];
 }
 
-RCT_EXPORT_METHOD(unlockAllOrientations(RCTPromiseResolveBlock) resolve
+RCT_EXPORT_METHOD(unlockAllOrientations:(RCTPromiseResolveBlock) resolve
                   reject: (RCTPromiseRejectBlock)reject))
 {
   #if DEBUG
