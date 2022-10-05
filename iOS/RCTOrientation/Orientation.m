@@ -268,7 +268,7 @@ RCT_EXPORT_METHOD(lockToLandscapeLeft:(RCTPromiseResolveBlock) resolve
 }
 
 RCT_EXPORT_METHOD(unlockAllOrientations:(RCTPromiseResolveBlock) resolve
-                  reject: (RCTPromiseRejectBlock)reject))
+                  reject: (RCTPromiseRejectBlock)reject)
 {
   #if DEBUG
     NSLog(@"Unlock All Orientations");
