@@ -17,8 +17,5 @@
                withOrientationMask: (UIInterfaceOrientationMask) orientationMask
                            resolve: (RCTPromiseResolveBlock) resolve
                             reject: (RCTPromiseRejectBlock)reject;
-- (void)updateInterfaceOrientationMask: (UIInterfaceOrientationMask) orientationMask
-                           resolve: (RCTPromiseResolveBlock) resolve
-                            reject: (RCTPromiseRejectBlock)reject;
 + (UIInterfaceOrientationMask)getOrientation;
 @end

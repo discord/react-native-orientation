@@ -28,7 +28,30 @@ static UIInterfaceOrientationMask _orientation = UIInterfaceOrientationMaskAllBu
 {
   [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
     if (@available(iOS 16.0, *)) {
-      [self updateInterfaceOrientationMask:orientationMask resolve:resolve reject:reject];
+      UIWindowScene *windowScene ;
+      
+      if (@available(iOS 13.0, *)) {
+        NSSet<UIScene *> *connectedScenes = [[UIApplication sharedApplication] connectedScenes];
+        if ([connectedScenes count] > 0) {
+          for (UIWindowScene *connectedWindowScene in connectedScenes) {
+            // Get the first window scene from the set.
+            windowScene = connectedWindowScene;
+            break;
+          }
+        }
+      } else {
+        UIWindow *window = [[UIApplication sharedApplication] keyWindow];
+        windowScene = [window windowScene];
+      }
+      
+      if (windowScene != nil) {
+        [windowScene requestGeometryUpdateWithPreferences: [[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:orientationMask]
+                                             errorHandler:^(NSError * _Nonnull error) {
+          reject(@"err", [error localizedDescription], nil);
+        }];
+      } else {
+        reject(@"err", @"unable to request geometry update because of nil WindowScene", nil);
+      }
     } else {
       [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
       [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: orientation] forKey:@"orientation"];
@@ -36,38 +59,6 @@ static UIInterfaceOrientationMask _orientation = UIInterfaceOrientationMaskAllBu
 
     resolve(nil);
   }];
-}
-
-- (void)updateInterfaceOrientationMask: (UIInterfaceOrientationMask) orientationMask
-                           resolve: (RCTPromiseResolveBlock) resolve
-                            reject: (RCTPromiseRejectBlock)reject
-{
-  if (@available(iOS 16.0, *)) {
-    UIWindowScene *windowScene ;
-    
-    if (@available(iOS 13.0, *)) {
-      NSSet<UIScene *> *connectedScenes = [[UIApplication sharedApplication] connectedScenes];
-      if ([connectedScenes count] > 0) {
-        for (UIWindowScene *connectedWindowScene in connectedScenes) {
-          // Get the first window scene from the set.
-          windowScene = connectedWindowScene;
-          break;
-        }
-      }
-    } else {
-      UIWindow *window = [[UIApplication sharedApplication] keyWindow];
-      windowScene = [window windowScene];
-    }
-    
-    if (windowScene != nil) {
-      [windowScene requestGeometryUpdateWithPreferences: [[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:orientationMask]
-                                           errorHandler:^(NSError * _Nonnull error) {
-        reject(@"err", [error localizedDescription], nil);
-      }];
-    } else {
-      reject(@"err", @"unable to request geometry update because of nil WindowScene", nil);
-    }
-  }
 }
 
 - (instancetype)init
@@ -275,11 +266,10 @@ RCT_EXPORT_METHOD(unlockAllOrientations:(RCTPromiseResolveBlock) resolve
   #endif
   UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskAllButUpsideDown;
   [Orientation setOrientation:orientationMask];
-  [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
-    [self updateInterfaceOrientationMask:orientationMask
-                                 resolve:resolve
-                                  reject: reject];
-  }];
+  [self updateInterfaceOrientation:UIInterfaceOrientationUnknown
+               withOrientationMask:orientationMask
+                           resolve:resolve
+                            reject:reject];
 }
 
 - (NSDictionary *)constantsToExport
