@@ -30,7 +30,7 @@ static UIInterfaceOrientationMask _orientation = UIInterfaceOrientationMaskAllBu
     if (@available(iOS 16.0, *)) {
       NSArray<UIScene *> *connectedScenes = [[[UIApplication sharedApplication] connectedScenes] allObjects];
       if ([connectedScenes count] > 0) {
-        UIWindowScene *windowScene = (UIWindowScene) connectedScenes[0];
+        UIWindowScene *windowScene = (UIWindowScene *) connectedScenes[0];
         [windowScene requestGeometryUpdateWithPreferences: [[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:orientationMask]
                                              errorHandler:^(NSError * _Nonnull error) {
           reject(@"err", [error localizedDescription], nil);
