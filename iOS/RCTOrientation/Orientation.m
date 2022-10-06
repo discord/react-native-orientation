@@ -28,29 +28,15 @@ static UIInterfaceOrientationMask _orientation = UIInterfaceOrientationMaskAllBu
 {
   [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
     if (@available(iOS 16.0, *)) {
-      UIWindowScene *windowScene ;
-      
-      if (@available(iOS 13.0, *)) {
-        NSSet<UIScene *> *connectedScenes = [[UIApplication sharedApplication] connectedScenes];
-        if ([connectedScenes count] > 0) {
-          for (UIWindowScene *connectedWindowScene in connectedScenes) {
-            // Get the first window scene from the set.
-            windowScene = connectedWindowScene;
-            break;
-          }
-        }
-      } else {
-        UIWindow *window = [[UIApplication sharedApplication] keyWindow];
-        windowScene = [window windowScene];
-      }
-      
-      if (windowScene != nil) {
+      NSArray<UIScene *> *connectedScenes = [[[UIApplication sharedApplication] connectedScenes] allObjects];
+      if ([connectedScenes count] > 0) {
+        UIWindowScene *windowScene = (UIWindowScene) connectedScenes[0];
         [windowScene requestGeometryUpdateWithPreferences: [[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:orientationMask]
                                              errorHandler:^(NSError * _Nonnull error) {
           reject(@"err", [error localizedDescription], nil);
         }];
       } else {
-        reject(@"err", @"unable to request geometry update because of nil WindowScene", nil);
+        reject(@"err", @"unable to request geometry update because there are zero connected scenes", nil);
       }
     } else {
       [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
