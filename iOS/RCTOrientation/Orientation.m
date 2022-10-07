@@ -3,6 +3,7 @@
 //
 
 #import "Orientation.h"
+#import <UIKit/UIKit.h>
 #if __has_include(<React/RCTEventDispatcher.h>)
 #import <React/RCTEventDispatcher.h>
 #else
@@ -18,6 +19,30 @@ static UIInterfaceOrientationMask _orientation = UIInterfaceOrientationMaskAllBu
 }
 + (UIInterfaceOrientationMask)getOrientation {
   return _orientation;
+}
+
+- (void)updateInterfaceOrientation: (UIInterfaceOrientation)orientation
+               withOrientationMask: (UIInterfaceOrientationMask) orientationMask
+{
+  [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
+    if (@available(iOS 16.0, *)) {
+      NSArray<UIScene *> *connectedScenes = [[[UIApplication sharedApplication] connectedScenes] allObjects];
+      if ([connectedScenes count] > 0) {
+        UIWindowScene *windowScene = (UIWindowScene *) connectedScenes[0];
+        [windowScene requestGeometryUpdateWithPreferences: [[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:orientationMask]
+                                             errorHandler:^(NSError * _Nonnull error) {
+          NSLog(@"%@",[error localizedDescription]);
+        }];
+        UIViewController* rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
+        [rootViewController setNeedsUpdateOfSupportedInterfaceOrientations];
+      } else {
+        NSLog(@"unable to request geometry update because there are zero connected scenes");
+      }
+    } else {
+      [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
+      [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: orientation] forKey:@"orientation"];
+    }
+  }];
 }
 
 - (instancetype)init
@@ -156,12 +181,10 @@ RCT_EXPORT_METHOD(lockToPortrait)
   #if DEBUG
     NSLog(@"Locked to Portrait");
   #endif
-  [Orientation setOrientation:UIInterfaceOrientationMaskPortrait];
-  [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
-    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-    [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: UIInterfaceOrientationPortrait] forKey:@"orientation"];
-  }];
-
+  UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskPortrait;
+  [Orientation setOrientation:orientationMask];
+  [self updateInterfaceOrientation:UIInterfaceOrientationPortrait
+               withOrientationMask:orientationMask];
 }
 
 RCT_EXPORT_METHOD(lockToLandscape)
@@ -171,18 +194,15 @@ RCT_EXPORT_METHOD(lockToLandscape)
   #endif
   UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
   NSString *orientationStr = [self getSpecificOrientationStr:orientation];
+  UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskLandscape;
   if ([orientationStr isEqualToString:@"LANDSCAPE-LEFT"]) {
-    [Orientation setOrientation:UIInterfaceOrientationMaskLandscape];
-    [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
-      [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-      [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: UIInterfaceOrientationLandscapeRight] forKey:@"orientation"];
-    }];
+    [Orientation setOrientation:orientationMask];
+    [self updateInterfaceOrientation:UIInterfaceOrientationLandscapeRight
+                 withOrientationMask:orientationMask];
   } else {
-    [Orientation setOrientation:UIInterfaceOrientationMaskLandscape];
-    [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
-      [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-      [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: UIInterfaceOrientationLandscapeLeft] forKey:@"orientation"];
-    }];
+    [Orientation setOrientation:orientationMask];
+    [self updateInterfaceOrientation: UIInterfaceOrientationLandscapeLeft
+                 withOrientationMask:orientationMask];
   }
 }
 
@@ -191,12 +211,10 @@ RCT_EXPORT_METHOD(lockToLandscapeRight)
   #if DEBUG
     NSLog(@"Locked to Landscape Right");
   #endif
-    [Orientation setOrientation:UIInterfaceOrientationMaskLandscapeLeft];
-    [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
-        [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-        [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: UIInterfaceOrientationLandscapeLeft] forKey:@"orientation"];
-    }];
-
+  UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskLandscapeLeft;
+  [Orientation setOrientation:UIInterfaceOrientationMaskLandscapeLeft];
+  [self updateInterfaceOrientation:UIInterfaceOrientationLandscapeLeft
+               withOrientationMask:orientationMask];
 }
 
 RCT_EXPORT_METHOD(lockToLandscapeLeft)
@@ -204,13 +222,10 @@ RCT_EXPORT_METHOD(lockToLandscapeLeft)
   #if DEBUG
     NSLog(@"Locked to Landscape Left");
   #endif
-  [Orientation setOrientation:UIInterfaceOrientationMaskLandscapeRight];
-  [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
-    // this seems counter intuitive
-    [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
-    [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: UIInterfaceOrientationLandscapeRight] forKey:@"orientation"];
-  }];
-
+  UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskLandscapeRight;
+  [Orientation setOrientation:orientationMask];
+  [self updateInterfaceOrientation:UIInterfaceOrientationLandscapeRight
+               withOrientationMask:orientationMask];
 }
 
 RCT_EXPORT_METHOD(unlockAllOrientations)
@@ -218,9 +233,10 @@ RCT_EXPORT_METHOD(unlockAllOrientations)
   #if DEBUG
     NSLog(@"Unlock All Orientations");
   #endif
-  [Orientation setOrientation:UIInterfaceOrientationMaskAllButUpsideDown];
-//  AppDelegate *delegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
-//  delegate.orientation = 3;
+  UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskAllButUpsideDown;
+  [Orientation setOrientation:orientationMask];
+  [self updateInterfaceOrientation:UIInterfaceOrientationUnknown
+               withOrientationMask:orientationMask];
 }
 
 - (NSDictionary *)constantsToExport
