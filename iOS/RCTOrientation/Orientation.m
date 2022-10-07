@@ -23,8 +23,6 @@ static UIInterfaceOrientationMask _orientation = UIInterfaceOrientationMaskAllBu
 
 - (void)updateInterfaceOrientation: (UIInterfaceOrientation)orientation
                withOrientationMask: (UIInterfaceOrientationMask) orientationMask
-                           resolve: (RCTPromiseResolveBlock) resolve
-                            reject: (RCTPromiseRejectBlock)reject
 {
   [[NSOperationQueue mainQueue] addOperationWithBlock:^ {
     if (@available(iOS 16.0, *)) {
@@ -33,17 +31,17 @@ static UIInterfaceOrientationMask _orientation = UIInterfaceOrientationMaskAllBu
         UIWindowScene *windowScene = (UIWindowScene *) connectedScenes[0];
         [windowScene requestGeometryUpdateWithPreferences: [[UIWindowSceneGeometryPreferencesIOS alloc] initWithInterfaceOrientations:orientationMask]
                                              errorHandler:^(NSError * _Nonnull error) {
-          reject(@"err", [error localizedDescription], nil);
+          NSLog(@"%@",[error localizedDescription]);
         }];
+        UIViewController* rootViewController = [UIApplication sharedApplication].delegate.window.rootViewController;
+        [rootViewController setNeedsUpdateOfSupportedInterfaceOrientations];
       } else {
-        reject(@"err", @"unable to request geometry update because there are zero connected scenes", nil);
+        NSLog(@"unable to request geometry update because there are zero connected scenes");
       }
     } else {
       [[UIDevice currentDevice] beginGeneratingDeviceOrientationNotifications];
       [[UIDevice currentDevice] setValue:[NSNumber numberWithInteger: orientation] forKey:@"orientation"];
     }
-
-    resolve(nil);
   }];
 }
 
@@ -178,8 +176,7 @@ RCT_EXPORT_METHOD(getSpecificOrientation:(RCTResponseSenderBlock)callback)
   callback(@[[NSNull null], orientationStr]);
 }
 
-RCT_EXPORT_METHOD(lockToPortrait:(RCTPromiseResolveBlock) resolve
-                  reject: (RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(lockToPortrait)
 {
   #if DEBUG
     NSLog(@"Locked to Portrait");
@@ -187,13 +184,10 @@ RCT_EXPORT_METHOD(lockToPortrait:(RCTPromiseResolveBlock) resolve
   UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskPortrait;
   [Orientation setOrientation:orientationMask];
   [self updateInterfaceOrientation:UIInterfaceOrientationPortrait
-               withOrientationMask:orientationMask
-                           resolve:resolve
-                            reject:reject];
+               withOrientationMask:orientationMask];
 }
 
-RCT_EXPORT_METHOD(lockToLandscape:(RCTPromiseResolveBlock) resolve
-                  reject: (RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(lockToLandscape)
 {
   #if DEBUG
     NSLog(@"Locked to Landscape");
@@ -204,20 +198,15 @@ RCT_EXPORT_METHOD(lockToLandscape:(RCTPromiseResolveBlock) resolve
   if ([orientationStr isEqualToString:@"LANDSCAPE-LEFT"]) {
     [Orientation setOrientation:orientationMask];
     [self updateInterfaceOrientation:UIInterfaceOrientationLandscapeRight
-                 withOrientationMask:orientationMask
-                             resolve:resolve
-                              reject:reject];
+                 withOrientationMask:orientationMask];
   } else {
     [Orientation setOrientation:orientationMask];
     [self updateInterfaceOrientation: UIInterfaceOrientationLandscapeLeft
-                 withOrientationMask:orientationMask
-                             resolve:resolve
-                              reject:reject];
+                 withOrientationMask:orientationMask];
   }
 }
 
-RCT_EXPORT_METHOD(lockToLandscapeRight:(RCTPromiseResolveBlock) resolve
-                  reject: (RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(lockToLandscapeRight)
 {
   #if DEBUG
     NSLog(@"Locked to Landscape Right");
@@ -225,13 +214,10 @@ RCT_EXPORT_METHOD(lockToLandscapeRight:(RCTPromiseResolveBlock) resolve
   UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskLandscapeLeft;
   [Orientation setOrientation:UIInterfaceOrientationMaskLandscapeLeft];
   [self updateInterfaceOrientation:UIInterfaceOrientationLandscapeLeft
-               withOrientationMask:orientationMask
-                           resolve:resolve
-                            reject:reject];
+               withOrientationMask:orientationMask];
 }
 
-RCT_EXPORT_METHOD(lockToLandscapeLeft:(RCTPromiseResolveBlock) resolve
-                  reject: (RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(lockToLandscapeLeft)
 {
   #if DEBUG
     NSLog(@"Locked to Landscape Left");
@@ -239,13 +225,10 @@ RCT_EXPORT_METHOD(lockToLandscapeLeft:(RCTPromiseResolveBlock) resolve
   UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskLandscapeRight;
   [Orientation setOrientation:orientationMask];
   [self updateInterfaceOrientation:UIInterfaceOrientationLandscapeRight
-               withOrientationMask:orientationMask
-                           resolve:resolve
-                            reject:reject];
+               withOrientationMask:orientationMask];
 }
 
-RCT_EXPORT_METHOD(unlockAllOrientations:(RCTPromiseResolveBlock) resolve
-                  reject: (RCTPromiseRejectBlock)reject)
+RCT_EXPORT_METHOD(unlockAllOrientations)
 {
   #if DEBUG
     NSLog(@"Unlock All Orientations");
@@ -253,9 +236,7 @@ RCT_EXPORT_METHOD(unlockAllOrientations:(RCTPromiseResolveBlock) resolve
   UIInterfaceOrientationMask orientationMask = UIInterfaceOrientationMaskAllButUpsideDown;
   [Orientation setOrientation:orientationMask];
   [self updateInterfaceOrientation:UIInterfaceOrientationUnknown
-               withOrientationMask:orientationMask
-                           resolve:resolve
-                            reject:reject];
+               withOrientationMask:orientationMask];
 }
 
 - (NSDictionary *)constantsToExport
