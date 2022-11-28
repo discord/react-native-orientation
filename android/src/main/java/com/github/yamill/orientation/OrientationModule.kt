@@ -2,13 +2,13 @@ package com.github.yamill.orientation
 
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
+import android.content.res.Configuration
 import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.github.yamill.orientation.listeners.OrientationAutoRotateListener
 import com.github.yamill.orientation.listeners.OrientationConfigListener
-import com.github.yamill.orientation.util.OrientationUtil
 
 
 class OrientationModule(reactContext: ReactApplicationContext) :
@@ -39,7 +39,7 @@ class OrientationModule(reactContext: ReactApplicationContext) :
 
     override fun getConstants(): Map<String, Any?> {
         val orientationInt = reactApplicationContext.resources.configuration.orientation
-        val orientation = OrientationUtil.getOrientationString(orientationInt)
+        val orientation = getOrientationString(orientationInt)
 
         return mapOf("initialOrientation" to orientation)
     }
@@ -61,7 +61,7 @@ class OrientationModule(reactContext: ReactApplicationContext) :
     @ReactMethod
     fun getOrientation(callback: Callback) {
         val orientationInt = reactApplicationContext.resources.configuration.orientation
-        val orientation = OrientationUtil.getOrientationString(orientationInt)
+        val orientation = getOrientationString(orientationInt)
         if (orientation == null) {
             callback.invoke(orientationInt, null)
         } else {
@@ -137,4 +137,16 @@ class OrientationModule(reactContext: ReactApplicationContext) :
             currentActivity?.requestedOrientation = LockState.UNSPECIFIED.orientationInt
         }
     }
+
+    private fun getOrientationString(orientation: Int) =
+        when (orientation) {
+            Configuration.ORIENTATION_LANDSCAPE ->
+                "LANDSCAPE"
+            Configuration.ORIENTATION_PORTRAIT ->
+                "PORTRAIT"
+            Configuration.ORIENTATION_UNDEFINED ->
+                "UNKNOWN"
+            else ->
+                null
+        }
 }

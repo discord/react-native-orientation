@@ -12,7 +12,6 @@ import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.common.ReactConstants
 import com.facebook.react.modules.core.DeviceEventManagerModule
-import com.github.yamill.orientation.util.OrientationUtil
 
 class OrientationConfigListener internal constructor(
     private val reactContext: ReactContext,
@@ -23,12 +22,7 @@ class OrientationConfigListener internal constructor(
 
         override fun onReceive(context: Context, intent: Intent) {
             val newConfig = intent.getParcelableExtra<Configuration>(INTENT_VALUE_KEY)!!
-            val orientation = if (newConfig.orientation == 1) {
-                "PORTRAIT"
-            } else {
-                "LANDSCAPE"
-            }
-            tryEmitOrientationChange(orientation, reactContext)
+            tryEmitOrientationChange(newConfig.orientation, reactContext)
         }
     }
 
@@ -41,8 +35,7 @@ class OrientationConfigListener internal constructor(
         }
 
         val orientationInt = reactContext.resources.configuration.orientation
-        val orientation = OrientationUtil.getOrientationString(orientationInt)
-        tryEmitOrientationChange(orientation, reactContext)
+        tryEmitOrientationChange(orientationInt, reactContext)
     }
 
     override fun onHostPause() {
@@ -74,10 +67,15 @@ class OrientationConfigListener internal constructor(
             )
         }
 
-        fun tryEmitOrientationChange(orientation: String?, reactContext: ReactContext) {
-            if (reactContext.hasActiveReactInstance() && orientation != null) {
+        fun tryEmitOrientationChange(orientation: Int, reactContext: ReactContext) {
+            if (reactContext.hasActiveReactInstance()) {
+                val orientationValue = if (orientation == 1) {
+                    "PORTRAIT"
+                } else {
+                    "LANDSCAPE"
+                }
                 val params = Arguments.createMap()
-                params.putString("orientation", orientation)
+                params.putString("orientation", orientationValue)
                 reactContext
                     .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
                     .emit("orientationDidChange", params)
