@@ -23,15 +23,8 @@ class OrientationConfigListener internal constructor(
 
         override fun onReceive(context: Context, intent: Intent) {
             val newConfig = intent.getParcelableExtra<Configuration>(INTENT_VALUE_KEY)!!
-            val orientationValue = OrientationUtil.getOrientationString(newConfig.orientation)
-            tryEmitOrientationChange(orientationValue, reactContext)
-            val params = Arguments.createMap()
-            params.putString("orientation", orientationValue)
-            if (reactContext.hasActiveReactInstance()) {
-                reactContext
-                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-                    .emit("orientationDidChange", params)
-            }
+            val orientation = OrientationUtil.getOrientationString(newConfig.orientation)
+            tryEmitOrientationChange(orientation, reactContext)
         }
     }
 
@@ -39,12 +32,13 @@ class OrientationConfigListener internal constructor(
         val activity = onGetCurrentActivity()
         if (activity != null) {
             activity.registerReceiver(receiver, IntentFilter(INTENT_ACTION_CONFIG_CHANGED))
-            val orientationInt = reactContext.resources.configuration.orientation
-            val orientation = OrientationUtil.getOrientationString(orientationInt)
-            tryEmitOrientationChange(orientation, reactContext)
         } else {
             FLog.e(ReactConstants.TAG, "no activity to register receiver")
         }
+
+        val orientationInt = reactContext.resources.configuration.orientation
+        val orientation = OrientationUtil.getOrientationString(orientationInt)
+        tryEmitOrientationChange(orientation, reactContext)
     }
 
     override fun onHostPause() {
@@ -77,14 +71,12 @@ class OrientationConfigListener internal constructor(
         }
 
         fun tryEmitOrientationChange(orientation: String?, reactContext: ReactContext) {
-            if (reactContext.hasActiveReactInstance()) {
-                if (orientation != null) {
-                    val params = Arguments.createMap()
-                    params.putString("orientation", orientation)
-                    reactContext
-                        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-                        .emit("orientationDidChange", params)
-                }
+            if (reactContext.hasActiveReactInstance() && orientation != null) {
+                val params = Arguments.createMap()
+                params.putString("orientation", orientation)
+                reactContext
+                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+                    .emit("orientationDidChange", params)
             }
         }
     }
