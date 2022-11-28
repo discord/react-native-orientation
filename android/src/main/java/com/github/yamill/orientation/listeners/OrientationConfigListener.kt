@@ -23,7 +23,11 @@ class OrientationConfigListener internal constructor(
 
         override fun onReceive(context: Context, intent: Intent) {
             val newConfig = intent.getParcelableExtra<Configuration>(INTENT_VALUE_KEY)!!
-            val orientation = OrientationUtil.getOrientationString(newConfig.orientation)
+            val orientation = if (newConfig.orientation == 1) {
+                "PORTRAIT"
+            } else {
+                "LANDSCAPE"
+            }
             tryEmitOrientationChange(orientation, reactContext)
         }
     }
