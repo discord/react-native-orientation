@@ -14,7 +14,7 @@ import com.facebook.react.common.ReactConstants
 import com.facebook.react.modules.core.DeviceEventManagerModule
 
 class OrientationConfigListener internal constructor(
-    reactContext: ReactContext,
+    private val reactContext: ReactContext,
     private val onGetCurrentActivity: () -> Activity?,
 ) : LifecycleEventListener {
 
@@ -22,18 +22,7 @@ class OrientationConfigListener internal constructor(
 
         override fun onReceive(context: Context, intent: Intent) {
             val newConfig = intent.getParcelableExtra<Configuration>(INTENT_VALUE_KEY)!!
-            val orientationValue = if (newConfig.orientation == 1) {
-                "PORTRAIT"
-            } else {
-                "LANDSCAPE"
-            }
-            val params = Arguments.createMap()
-            params.putString("orientation", orientationValue)
-            if (reactContext.hasActiveReactInstance()) {
-                reactContext
-                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-                    .emit("orientationDidChange", params)
-            }
+            tryEmitOrientationChange(newConfig.orientation, reactContext)
         }
     }
 
@@ -44,6 +33,9 @@ class OrientationConfigListener internal constructor(
         } else {
             FLog.e(ReactConstants.TAG, "no activity to register receiver")
         }
+
+        val orientationInt = reactContext.resources.configuration.orientation
+        tryEmitOrientationChange(orientationInt, reactContext)
     }
 
     override fun onHostPause() {
@@ -73,6 +65,21 @@ class OrientationConfigListener internal constructor(
                     intent.putExtra(INTENT_VALUE_KEY, newConfig)
                 }
             )
+        }
+
+        fun tryEmitOrientationChange(orientation: Int, reactContext: ReactContext) {
+            if (reactContext.hasActiveReactInstance()) {
+                val orientationValue = if (orientation == 1) {
+                    "PORTRAIT"
+                } else {
+                    "LANDSCAPE"
+                }
+                val params = Arguments.createMap()
+                params.putString("orientation", orientationValue)
+                reactContext
+                    .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+                    .emit("orientationDidChange", params)
+            }
         }
     }
 }
