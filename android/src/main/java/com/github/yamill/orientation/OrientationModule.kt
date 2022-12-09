@@ -25,7 +25,7 @@ class OrientationModule(reactContext: ReactApplicationContext) :
         LOCKED_LANDSCAPE_RIGHT(
             orientationInt = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE),
         UNLOCKED(
-            orientationInt = ActivityInfo.SCREEN_ORIENTATION_SENSOR),
+            orientationInt = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED),
         UNSPECIFIED(
             orientationInt = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED,
         ),
