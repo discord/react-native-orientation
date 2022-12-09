@@ -3,6 +3,7 @@ package com.github.yamill.orientation
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
+import android.util.Log
 import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
@@ -111,29 +112,39 @@ class OrientationModule(reactContext: ReactApplicationContext) :
         autoRotateEnabled: Boolean = this.autoRotateEnabled,
         autoRotateIgnored: Boolean = this.autoRotateIgnored,
     ) {
+        Log.d("pikachu", "update orientation. 000. lockState: ${lockState}. autoRotateEnabled: ${autoRotateEnabled}. autoRotateIgnored: ${autoRotateIgnored}")
         if (this.lockState == lockState &&
             this.autoRotateEnabled == autoRotateEnabled &&
             this.autoRotateIgnored == autoRotateIgnored) {
+            Log.d("pikachu", "update orientation. 111")
+
             return
         } else {
             this.lockState = lockState
             this.autoRotateEnabled = autoRotateEnabled
             this.autoRotateIgnored = autoRotateIgnored
+
+            Log.d("pikachu", "update orientation. 222")
         }
 
         if (lockState == null) {
+            Log.d("pikachu", "update orientation. 333")
             return
         }
 
         // When enabled set to last requested orientation.
         val autoRotationEnabled = autoRotateEnabled || autoRotateIgnored
         if (autoRotationEnabled) {
+            Log.d("pikachu", "update orientation. 444. lockState.orientationInt: ${lockState.orientationInt}")
+
             currentActivity?.requestedOrientation = lockState.orientationInt
         }
 
         // When disabled ensure we are unspecified.
         val autoRotationDisabled = !autoRotateEnabled && !autoRotateIgnored
         if  (autoRotationDisabled && lockState != LockState.UNSPECIFIED) {
+            Log.d("pikachu", "update orientation. 555")
+
             currentActivity?.requestedOrientation = LockState.UNSPECIFIED.orientationInt
         }
     }
