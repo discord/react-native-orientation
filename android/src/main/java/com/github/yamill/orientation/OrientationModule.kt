@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
 import android.util.Log
+import android.view.OrientationEventListener
 import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
@@ -25,7 +26,7 @@ class OrientationModule(reactContext: ReactApplicationContext) :
         LOCKED_LANDSCAPE_RIGHT(
             orientationInt = ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE),
         UNLOCKED(
-            orientationInt = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED),
+            orientationInt = ActivityInfo.SCREEN_ORIENTATION_SENSOR),
         UNSPECIFIED(
             orientationInt = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED,
         ),
@@ -35,6 +36,8 @@ class OrientationModule(reactContext: ReactApplicationContext) :
 
     private var autoRotateEnabled = false
     private var autoRotateIgnored = false
+
+    private lateinit var orientationEventListener: OrientationEventListener;
 
     override fun getName() = "Orientation"
 
@@ -56,6 +59,12 @@ class OrientationModule(reactContext: ReactApplicationContext) :
                 currentActivity
             }
         )
+
+        orientationEventListener = object: OrientationEventListener(reactContext) {
+            override fun onOrientationChanged(orientation: Int) {
+                Log.d("pikachu", "orientation change from event listener. orientation: ${orientation}")
+            }
+        }
     }
 
     @Suppress("unused")
@@ -143,7 +152,7 @@ class OrientationModule(reactContext: ReactApplicationContext) :
         // When disabled ensure we are unspecified.
         val autoRotationDisabled = !autoRotateEnabled && !autoRotateIgnored
         if  (autoRotationDisabled && lockState != LockState.UNSPECIFIED) {
-            Log.d("pikachu", "update orientation. 555")
+            Log.d("pikachu", "update orientation. 444. lockState.orientationInt: ${lockState.orientationInt}")
 
             currentActivity?.requestedOrientation = LockState.UNSPECIFIED.orientationInt
         }
