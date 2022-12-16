@@ -33,5 +33,6 @@ class OrientationListener internal constructor(
 
     }
 
-
+    override fun onHostPause() = Unit
+    override fun onHostDestroy() = Unit
 }
