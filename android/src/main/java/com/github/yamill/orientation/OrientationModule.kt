@@ -11,6 +11,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.github.yamill.orientation.listeners.OrientationAutoRotateListener
 import com.github.yamill.orientation.listeners.OrientationConfigListener
+import com.github.yamill.orientation.listeners.OrientationListener
 
 
 class OrientationModule(reactContext: ReactApplicationContext) :
@@ -37,8 +38,6 @@ class OrientationModule(reactContext: ReactApplicationContext) :
     private var autoRotateEnabled = false
     private var autoRotateIgnored = false
 
-    private lateinit var orientationEventListener: OrientationEventListener;
-
     override fun getName() = "Orientation"
 
     override fun getConstants(): Map<String, Any?> {
@@ -60,11 +59,13 @@ class OrientationModule(reactContext: ReactApplicationContext) :
             }
         )
 
-        orientationEventListener = object: OrientationEventListener(currentActivity) {
-            override fun onOrientationChanged(orientation: Int) {
-                Log.d("pikachu", "orientation change from event listener. orientation: ${orientation}")
+        reactContext.addLifecycleEventListener(
+            OrientationListener(reactContext) {
+                currentActivity;
             }
-        }
+        )
+
+
     }
 
     @Suppress("unused")
