@@ -1,12 +1,12 @@
 package com.github.yamill.orientation.listeners
 
 import android.app.Activity
-import android.content.IntentFilter
 import android.util.Log
 import com.facebook.common.logging.FLog
 import android.view.OrientationEventListener
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.bridge.ReactContext
+import com.facebook.react.common.ReactConstants
 
 class OrientationListener internal constructor(
         private val reactContext: ReactContext,
