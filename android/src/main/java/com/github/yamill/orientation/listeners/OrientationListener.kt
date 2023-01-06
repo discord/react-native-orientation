@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.OrientationEventListener
 import com.facebook.common.logging.FLog
 import com.facebook.react.bridge.Arguments
+import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.common.ReactConstants
@@ -51,7 +52,7 @@ class OrientationListener internal constructor(
         private fun tryEmitOrientationDegreesChange(orientationDegrees: Int, reactContext: ReactContext) {
             if (reactContext.hasActiveReactInstance()) {
                 val params = Arguments.createMap()
-                params.putString("orientationDegrees", orientationDegrees)
+                params.putInt("orientationDegrees", orientationDegrees)
                 Log.d("pikachu", "try emit orientation degrees change. orientationDegrees: ${orientationDegrees}")
                 reactContext
                         .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
