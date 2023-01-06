@@ -2,11 +2,14 @@ package com.github.yamill.orientation.listeners
 
 import android.app.Activity
 import android.util.Log
-import com.facebook.common.logging.FLog
 import android.view.OrientationEventListener
+import com.facebook.common.logging.FLog
+import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.LifecycleEventListener
 import com.facebook.react.bridge.ReactContext
 import com.facebook.react.common.ReactConstants
+import com.github.yamill.orientation.throttleLatest
+import kotlinx.coroutines.GlobalScope
 
 class OrientationListener internal constructor(
         private val reactContext: ReactContext,
@@ -19,8 +22,9 @@ class OrientationListener internal constructor(
         val activity = onGetCurrentActivity()
         if (activity != null && !this::orientationEventListener.isInitialized) {
             orientationEventListener = object: OrientationEventListener(activity) {
-                override fun onOrientationChanged(orientation: Int) {
-                    Log.d("pikachu", "orientation change from event listener. orientation: ${orientation}")
+                override fun onOrientationChanged(orientationDegrees: Int) {
+                    Log.d("pikachu", "orientation change from event listener. orientation: ${orientationDegrees}")
+                    onOrientationDegreesChange(orientationDegrees, reactContext)
                 }
             }
 
@@ -35,4 +39,24 @@ class OrientationListener internal constructor(
 
     override fun onHostPause() = Unit
     override fun onHostDestroy() = Unit
+
+    companion object {
+
+        val onOrientationDegreesChange: (Int, ReactContext) -> Unit = throttleLatest(
+                intervalMs = 300L,
+                coroutineScope = GlobalScope,
+                ::tryEmitOrientationDegreesChange
+        )
+
+        private fun tryEmitOrientationDegreesChange(orientationDegrees: Int, reactContext: ReactContext) {
+            if (reactContext.hasActiveReactInstance()) {
+                val params = Arguments.createMap()
+                params.putString("orientationDegrees", orientationDegrees)
+                Log.d("pikachu", "try emit orientation degrees change. orientationDegrees: ${orientationDegrees}")
+                reactContext
+                        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+                        .emit("orientationDegreesDidChange", params)
+            }
+        }
+    }
 }
