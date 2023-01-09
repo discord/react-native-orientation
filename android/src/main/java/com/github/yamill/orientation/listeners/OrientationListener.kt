@@ -24,7 +24,7 @@ class OrientationListener internal constructor(
         if (activity != null && !this::orientationEventListener.isInitialized) {
             orientationEventListener = object: OrientationEventListener(activity) {
                 override fun onOrientationChanged(orientationDegrees: Int) {
-                    Log.d("pikachu", "orientation change from event listener. orientation: ${orientationDegrees}")
+//                    Log.d("pikachu", "orientation change from event listener. orientation: ${orientationDegrees}")
                     onOrientationDegreesChange(orientationDegrees, reactContext)
                 }
             }
@@ -42,6 +42,7 @@ class OrientationListener internal constructor(
     override fun onHostDestroy() = Unit
 
     companion object {
+        var lastEmittedOrientationDegrees: Int? = null
 
         val onOrientationDegreesChange: (Int, ReactContext) -> Unit = throttleLatest(
                 intervalMs = 1000L,
@@ -49,14 +50,20 @@ class OrientationListener internal constructor(
                 ::tryEmitOrientationDegreesChange
         )
 
+        // TODO: do a distinct until changed
         private fun tryEmitOrientationDegreesChange(orientationDegrees: Int, reactContext: ReactContext) {
             if (reactContext.hasActiveReactInstance()) {
                 val params = Arguments.createMap()
-                params.putInt("orientationDegrees", orientationDegrees)
-                Log.d("pikachu", "try emit orientation degrees change. orientationDegrees: ${orientationDegrees}")
-                reactContext
-                        .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
-                        .emit("orientationDegreesDidChange", params)
+
+                if (orientationDegrees != lastEmittedOrientationDegrees) {
+                    params.putInt("orientationDegrees", orientationDegrees)
+                    Log.d("pikachu", "try emit orientation degrees change. orientationDegrees: ${orientationDegrees}")
+                    reactContext
+                            .getJSModule(DeviceEventManagerModule.RCTDeviceEventEmitter::class.java)
+                            .emit("orientationDegreesDidChange", params)
+
+                    lastEmittedOrientationDegrees = orientationDegrees
+                }
             }
         }
     }
