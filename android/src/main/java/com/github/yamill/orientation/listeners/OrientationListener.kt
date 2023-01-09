@@ -44,7 +44,7 @@ class OrientationListener internal constructor(
     companion object {
 
         val onOrientationDegreesChange: (Int, ReactContext) -> Unit = throttleLatest(
-                intervalMs = 300L,
+                intervalMs = 1000L,
                 coroutineScope = GlobalScope,
                 ::tryEmitOrientationDegreesChange
         )
