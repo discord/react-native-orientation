@@ -79,6 +79,17 @@ module.exports = {
       });
   },
 
+  removeOrientationDegreesChangeListener(callback) {
+    var key = getKey(callback);
+
+    if (!listeners[key]) {
+      return;
+    }
+
+    listeners[key].remove();
+    listeners[key] = null;
+  },
+
   removeOrientationListener(cb) {
     var key = getKey(cb);
 
