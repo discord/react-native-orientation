@@ -75,7 +75,7 @@ module.exports = {
     var key = getKey(cb);
     listeners[key] = DeviceEventEmitter.addListener(orientationDegreesDidChangeEvent,
       (body) => {
-        cb(body.orientationDegrees);
+        callback(body.orientationDegrees);
       });
   },
 
