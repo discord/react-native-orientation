@@ -166,6 +166,13 @@ RCT_EXPORT_METHOD(getOrientation:(RCTResponseSenderBlock)callback)
 {
   UIDeviceOrientation orientation = [[UIDevice currentDevice] orientation];
   NSString *orientationStr = [self getOrientationStr:orientation];
+  switch (orientationStr) {
+    case @"PORTRAIT":
+      NSLog(@"getOrientation PORTRAIT");
+      break;
+    case @"LANDSCAPE":
+      NSLog(@"getOrientation LANDSCAPE");
+  }
   callback(@[[NSNull null], orientationStr]);
 }
 
