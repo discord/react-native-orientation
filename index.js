@@ -104,7 +104,7 @@ module.exports = {
   addSpecificOrientationListener(cb) {
     var key = getKey(cb);
 
-    listeners[key] = DeviceEventEmitter.addListener(specificOrientationDidChangdeEvent,
+    listeners[key] = DeviceEventEmitter.addListener(specificOrientationDidChangeEvent,
       (body) => {
         cb(body.specificOrientation);
       });
