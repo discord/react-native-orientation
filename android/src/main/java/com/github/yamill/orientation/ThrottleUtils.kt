@@ -5,6 +5,10 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+/**
+ * This is based on the throttleLatest implementation from
+ * https://stackoverflow.com/questions/50858684/kotlin-android-debounce .
+ */
 fun <T, R> throttleLatest(
         intervalMs: Long = 300L,
         coroutineScope: CoroutineScope,

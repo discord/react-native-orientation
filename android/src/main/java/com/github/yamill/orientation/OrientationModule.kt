@@ -64,8 +64,6 @@ class OrientationModule(reactContext: ReactApplicationContext) :
                 currentActivity;
             }
         )
-
-
     }
 
     @Suppress("unused")
