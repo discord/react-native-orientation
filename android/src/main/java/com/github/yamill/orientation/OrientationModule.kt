@@ -9,6 +9,7 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
 import com.github.yamill.orientation.listeners.OrientationAutoRotateListener
 import com.github.yamill.orientation.listeners.OrientationConfigListener
+import com.github.yamill.orientation.listeners.OrientationListener
 
 
 class OrientationModule(reactContext: ReactApplicationContext) :
@@ -53,6 +54,12 @@ class OrientationModule(reactContext: ReactApplicationContext) :
         reactContext.addLifecycleEventListener(
             OrientationConfigListener(reactContext) {
                 currentActivity
+            }
+        )
+
+        reactContext.addLifecycleEventListener(
+            OrientationListener(reactContext) {
+                currentActivity;
             }
         )
     }
