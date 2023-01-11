@@ -1,7 +1,6 @@
 package com.github.yamill.orientation.listeners
 
 import android.app.Activity
-import android.util.Log
 import android.view.OrientationEventListener
 import com.facebook.common.logging.FLog
 import com.facebook.react.bridge.Arguments
@@ -23,6 +22,10 @@ class OrientationListener internal constructor(
         val activity = onGetCurrentActivity()
         if (activity != null && !this::orientationEventListener.isInitialized) {
             orientationEventListener = object: OrientationEventListener(activity) {
+                /**
+                 * See https://developer.android.com/reference/android/view/OrientationEventListener#onOrientationChanged(int)
+                 * for the range of orientationDegrees values.
+                 */
                 override fun onOrientationChanged(orientationDegrees: Int) {
                     onOrientationDegreesChange(orientationDegrees, reactContext)
                 }
