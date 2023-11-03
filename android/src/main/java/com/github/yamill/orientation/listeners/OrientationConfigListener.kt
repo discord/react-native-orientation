@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
+import androidx.core.content.ContextCompat
 import com.facebook.common.logging.FLog
 import com.facebook.react.bridge.Arguments
 import com.facebook.react.bridge.LifecycleEventListener
@@ -29,7 +30,7 @@ class OrientationConfigListener internal constructor(
     override fun onHostResume() {
         val activity = onGetCurrentActivity()
         if (activity != null) {
-            activity.registerReceiver(receiver, IntentFilter(INTENT_ACTION_CONFIG_CHANGED))
+            ContextCompat.registerReceiver(activity, receiver, IntentFilter(INTENT_ACTION_CONFIG_CHANGED), ContextCompat.RECEIVER_NOT_EXPORTED)
         } else {
             FLog.e(ReactConstants.TAG, "no activity to register receiver")
         }

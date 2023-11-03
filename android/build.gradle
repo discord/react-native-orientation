@@ -54,4 +54,5 @@ dependencies {
     implementation "com.facebook.react:react-native:+"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$_kotlinVersion"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$_kotlinCoroutinesVersion"
+    implementation "androidx.core:core-ktx:1.12.0"
 }
