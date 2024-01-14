@@ -36,6 +36,8 @@ def _kotlinVersion = _ext.has('kotlinVersion') ? _ext.kotlinVersion : "1.5.10"
 def _kotlinCoroutinesVersion = "1.6.4"
 
 android {
+    namespace 'com.github.yamill.orientation'
+
     compileSdkVersion _compileSdkVersion
 
     defaultConfig {
