@@ -30,7 +30,7 @@ class OrientationConfigListener internal constructor(
     override fun onHostResume() {
         val activity = onGetCurrentActivity()
         if (activity != null) {
-            ContextCompat.registerReceiver(activity, receiver, IntentFilter(INTENT_ACTION_CONFIG_CHANGED), ContextCompat.RECEIVER_NOT_EXPORTED)
+            ContextCompat.registerReceiver(activity, receiver, IntentFilter(INTENT_ACTION_CONFIG_CHANGED), ContextCompat.RECEIVER_EXPORTED)
         } else {
             FLog.e(ReactConstants.TAG, "no activity to register receiver")
         }
