@@ -120,12 +120,7 @@ class OrientationModule(reactContext: ReactApplicationContext) :
     ) {
         if (this.lockState == lockState &&
             this.autoRotateEnabled == autoRotateEnabled &&
-
-            // If auto-rotate is disabled from the system setting, and we are
-            // updating the orientation lock, we may have to re-apply the
-            // orientation lock with unchanged parameters after backgrounding
-            // and foregrounding the app.
-            !autoRotateIgnored) {
+            this.autoRotateIgnored == autoRotateIgnored) {
             return
         } else {
             this.lockState = lockState
