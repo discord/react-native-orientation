@@ -85,26 +85,26 @@ class OrientationModule(reactContext: ReactApplicationContext) :
     @SuppressLint("SourceLockedOrientationActivity")
     @Suppress("unused")
     @ReactMethod
-    fun lockToPortrait() {
-        updateOrientation(lockState = LockState.LOCKED_PORTRAIT)
+    fun lockToPortrait(force: Boolean) {
+        updateOrientation(lockState = LockState.LOCKED_PORTRAIT, force = force)
     }
 
     @Suppress("unused")
     @ReactMethod
-    fun lockToLandscape() {
-        updateOrientation(lockState = LockState.LOCKED_LANDSCAPE)
+    fun lockToLandscape(force: Boolean) {
+        updateOrientation(lockState = LockState.LOCKED_LANDSCAPE, force = force)
     }
 
     @Suppress("unused")
     @ReactMethod
-    fun lockToLandscapeLeft() {
-        updateOrientation(lockState = LockState.LOCKED_LANDSCAPE_LEFT)
+    fun lockToLandscapeLeft(force: Boolean) {
+        updateOrientation(lockState = LockState.LOCKED_LANDSCAPE_LEFT, force = force)
     }
 
     @Suppress("unused")
     @ReactMethod
-    fun lockToLandscapeRight() {
-        updateOrientation(lockState = LockState.LOCKED_LANDSCAPE_RIGHT)
+    fun lockToLandscapeRight(force: Boolean) {
+        updateOrientation(lockState = LockState.LOCKED_LANDSCAPE_RIGHT, force = force)
     }
 
     @Suppress("unused")
@@ -117,10 +117,12 @@ class OrientationModule(reactContext: ReactApplicationContext) :
         lockState: LockState? = this.lockState,
         autoRotateEnabled: Boolean = this.autoRotateEnabled,
         autoRotateIgnored: Boolean = this.autoRotateIgnored,
+        force: Boolean = false
     ) {
         if (this.lockState == lockState &&
             this.autoRotateEnabled == autoRotateEnabled &&
-            this.autoRotateIgnored == autoRotateIgnored) {
+            this.autoRotateIgnored == autoRotateIgnored &&
+            !force) {
             return
         } else {
             this.lockState = lockState

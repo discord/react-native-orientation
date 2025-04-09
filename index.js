@@ -43,20 +43,20 @@ module.exports = {
     }
   },
 
-  lockToPortrait() {
-    Orientation.lockToPortrait();
+  lockToPortrait(force = false) {
+    Orientation.lockToPortrait(force);
   },
 
-  lockToLandscape() {
-    Orientation.lockToLandscape();
+  lockToLandscape(force = false) {
+    Orientation.lockToLandscape(force);
   },
 
-  lockToLandscapeRight() {
-    Orientation.lockToLandscapeRight();
+  lockToLandscapeRight(force = false) {
+    Orientation.lockToLandscapeRight(force);
   },
 
-  lockToLandscapeLeft() {
-    Orientation.lockToLandscapeLeft();
+  lockToLandscapeLeft(force = false) {
+    Orientation.lockToLandscapeLeft(force);
   },
 
   unlockAllOrientations() {

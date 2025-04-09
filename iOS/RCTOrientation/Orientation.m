@@ -176,7 +176,7 @@ RCT_EXPORT_METHOD(getSpecificOrientation:(RCTResponseSenderBlock)callback)
   callback(@[[NSNull null], orientationStr]);
 }
 
-RCT_EXPORT_METHOD(lockToPortrait)
+RCT_EXPORT_METHOD(lockToPortrait:(BOOL)force)
 {
   #if DEBUG
     NSLog(@"Locked to Portrait");
@@ -187,7 +187,7 @@ RCT_EXPORT_METHOD(lockToPortrait)
                withOrientationMask:orientationMask];
 }
 
-RCT_EXPORT_METHOD(lockToLandscape)
+RCT_EXPORT_METHOD(lockToLandscape:(BOOL)force)
 {
   #if DEBUG
     NSLog(@"Locked to Landscape");
@@ -206,7 +206,7 @@ RCT_EXPORT_METHOD(lockToLandscape)
   }
 }
 
-RCT_EXPORT_METHOD(lockToLandscapeRight)
+RCT_EXPORT_METHOD(lockToLandscapeRight:(BOOL)force)
 {
   #if DEBUG
     NSLog(@"Locked to Landscape Right");
@@ -217,7 +217,7 @@ RCT_EXPORT_METHOD(lockToLandscapeRight)
                withOrientationMask:orientationMask];
 }
 
-RCT_EXPORT_METHOD(lockToLandscapeLeft)
+RCT_EXPORT_METHOD(lockToLandscapeLeft:(BOOL)force)
 {
   #if DEBUG
     NSLog(@"Locked to Landscape Left");
