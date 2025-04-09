@@ -3,6 +3,7 @@ package com.github.yamill.orientation
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
+import android.util.Log
 import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
@@ -33,8 +34,17 @@ class OrientationModule(reactContext: ReactApplicationContext) :
 
     private var lockState: LockState? = null
 
+    // Tracks the value of the system rotation lock. When true the layout
+    // should rotate with the phone orientation. When false the layout should
+    // stay locked in the current orientation.
     private var autoRotateEnabled = false
+
+    // Tracks the application's intent to override the system rotation lock.
+    // When true the layout should obey the requested orientation regardless
+    // of the system rotation lock.
     private var autoRotateIgnored = false
+
+    private var invocationCount = 0
 
     override fun getName() = "Orientation"
 
@@ -48,6 +58,7 @@ class OrientationModule(reactContext: ReactApplicationContext) :
     init {
         reactContext.addLifecycleEventListener(
             OrientationAutoRotateListener(reactContext) { autoRotateEnabled ->
+                Log.i("FOO HAMZA SAYS Orientation", "OrientationAutoRotateListener autoRotateEnabled: $autoRotateEnabled")
                 updateOrientation(autoRotateEnabled = autoRotateEnabled)
             }
         )
@@ -85,26 +96,26 @@ class OrientationModule(reactContext: ReactApplicationContext) :
     @SuppressLint("SourceLockedOrientationActivity")
     @Suppress("unused")
     @ReactMethod
-    fun lockToPortrait(force: Boolean) {
-        updateOrientation(lockState = LockState.LOCKED_PORTRAIT, force = force)
+    fun lockToPortrait() {
+        updateOrientation(lockState = LockState.LOCKED_PORTRAIT)
     }
 
     @Suppress("unused")
     @ReactMethod
-    fun lockToLandscape(force: Boolean) {
-        updateOrientation(lockState = LockState.LOCKED_LANDSCAPE, force = force)
+    fun lockToLandscape() {
+        updateOrientation(lockState = LockState.LOCKED_LANDSCAPE)
     }
 
     @Suppress("unused")
     @ReactMethod
-    fun lockToLandscapeLeft(force: Boolean) {
-        updateOrientation(lockState = LockState.LOCKED_LANDSCAPE_LEFT, force = force)
+    fun lockToLandscapeLeft() {
+        updateOrientation(lockState = LockState.LOCKED_LANDSCAPE_LEFT)
     }
 
     @Suppress("unused")
     @ReactMethod
-    fun lockToLandscapeRight(force: Boolean) {
-        updateOrientation(lockState = LockState.LOCKED_LANDSCAPE_RIGHT, force = force)
+    fun lockToLandscapeRight() {
+        updateOrientation(lockState = LockState.LOCKED_LANDSCAPE_RIGHT)
     }
 
     @Suppress("unused")
@@ -117,12 +128,29 @@ class OrientationModule(reactContext: ReactApplicationContext) :
         lockState: LockState? = this.lockState,
         autoRotateEnabled: Boolean = this.autoRotateEnabled,
         autoRotateIgnored: Boolean = this.autoRotateIgnored,
-        force: Boolean = false
     ) {
+        invocationCount++
+        Log.i("FOO HAMZA SAYS Orientation ${invocationCount}", """
+            Cached values:
+            - lockState: ${this.lockState}
+            - autoRotateEnabled: ${this.autoRotateEnabled}
+            - autoRotateIgnored: ${this.autoRotateIgnored}
+            
+            Incoming values:
+            - lockState: ${lockState}
+            - autoRotateEnabled: ${autoRotateEnabled}
+            - autoRotateIgnored: ${autoRotateIgnored}
+            
+            lockState equal: ${this.lockState == lockState}
+            autoRotateEnabled equal: ${this.autoRotateEnabled == autoRotateEnabled}
+            autoRotateIgnored false: ${!this.autoRotateIgnored && !autoRotateIgnored}
+        """.trimIndent())
+
         if (this.lockState == lockState &&
             this.autoRotateEnabled == autoRotateEnabled &&
-            this.autoRotateIgnored == autoRotateIgnored &&
-            !force) {
+            !this.autoRotateIgnored &&
+            !autoRotateIgnored) {
+            Log.i("FOO HAMZA SAYS Orientation ${invocationCount}", "Returning early because values are equal")
             return
         } else {
             this.lockState = lockState
@@ -131,18 +159,21 @@ class OrientationModule(reactContext: ReactApplicationContext) :
         }
 
         if (lockState == null) {
+            Log.i("FOO HAMZA SAYS Orientation ${invocationCount}", "Returning early because lockState is null")
             return
         }
 
         // When enabled set to last requested orientation.
         val autoRotationEnabled = autoRotateEnabled || autoRotateIgnored
         if (autoRotationEnabled) {
+            Log.i("FOO HAMZA SAYS Orientation ${invocationCount}", "Setting requested orientation to ${lockState} ${lockState.orientationInt}")
             currentActivity?.requestedOrientation = lockState.orientationInt
         }
 
         // When disabled ensure we are unspecified.
         val autoRotationDisabled = !autoRotateEnabled && !autoRotateIgnored
         if  (autoRotationDisabled && lockState != LockState.UNSPECIFIED) {
+            Log.i("FOO HAMZA SAYS Orientation ${invocationCount}", "Resetting to system preference")
             currentActivity?.requestedOrientation = LockState.UNSPECIFIED.orientationInt
         }
     }
