@@ -39,33 +39,27 @@ module.exports = {
 
   ignoreAutoRotate(shouldIgnore) {
     if (Platform.OS === 'android') {
-    console.log("FOO HAMZA SAYS lib ignoreAutoRotate", shouldIgnore);
-    Orientation.ignoreAutoRotate(shouldIgnore);
+      Orientation.ignoreAutoRotate(shouldIgnore);
     }
   },
 
   lockToPortrait() {
-    console.log("FOO HAMZA SAYS lib lockToPortrait");
     Orientation.lockToPortrait();
   },
 
   lockToLandscape() {
-    console.log("FOO HAMZA SAYS lib lockToLandscape");
     Orientation.lockToLandscape();
   },
 
   lockToLandscapeRight() {
-    console.log("FOO HAMZA SAYS lib lockToLandscapeRight");
     Orientation.lockToLandscapeRight();
   },
 
   lockToLandscapeLeft() {
-    console.log("FOO HAMZA SAYS lib lockToLandscapeLeft");
     Orientation.lockToLandscapeLeft();
   },
 
   unlockAllOrientations() {
-    console.log("FOO HAMZA SAYS lib unlockAllOrientations");
     Orientation.unlockAllOrientations();
   },
 

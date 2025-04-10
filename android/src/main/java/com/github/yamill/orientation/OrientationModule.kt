@@ -3,7 +3,6 @@ package com.github.yamill.orientation
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
-import android.util.Log
 import com.facebook.react.bridge.Callback
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
@@ -44,8 +43,6 @@ class OrientationModule(reactContext: ReactApplicationContext) :
     // of the system rotation lock.
     private var autoRotateIgnored = false
 
-    private var invocationCount = 0
-
     override fun getName() = "Orientation"
 
     override fun getConstants(): Map<String, Any?> {
@@ -58,7 +55,6 @@ class OrientationModule(reactContext: ReactApplicationContext) :
     init {
         reactContext.addLifecycleEventListener(
             OrientationAutoRotateListener(reactContext) { autoRotateEnabled ->
-                Log.i("FOO HAMZA SAYS Orientation", "OrientationAutoRotateListener autoRotateEnabled: $autoRotateEnabled")
                 updateOrientation(autoRotateEnabled = autoRotateEnabled)
             }
         )
@@ -129,28 +125,9 @@ class OrientationModule(reactContext: ReactApplicationContext) :
         autoRotateEnabled: Boolean = this.autoRotateEnabled,
         autoRotateIgnored: Boolean = this.autoRotateIgnored,
     ) {
-        invocationCount++
-        Log.i("FOO HAMZA SAYS Orientation ${invocationCount}", """
-            Cached values:
-            - lockState: ${this.lockState}
-            - autoRotateEnabled: ${this.autoRotateEnabled}
-            - autoRotateIgnored: ${this.autoRotateIgnored}
-            
-            Incoming values:
-            - lockState: ${lockState}
-            - autoRotateEnabled: ${autoRotateEnabled}
-            - autoRotateIgnored: ${autoRotateIgnored}
-            
-            lockState equal: ${this.lockState == lockState}
-            autoRotateEnabled equal: ${this.autoRotateEnabled == autoRotateEnabled}
-            autoRotateIgnored false: ${!this.autoRotateIgnored && !autoRotateIgnored}
-        """.trimIndent())
-
         if (this.lockState == lockState &&
             this.autoRotateEnabled == autoRotateEnabled &&
-            !this.autoRotateIgnored &&
-            !autoRotateIgnored) {
-            Log.i("FOO HAMZA SAYS Orientation ${invocationCount}", "Returning early because values are equal")
+            this.autoRotateIgnored == autoRotateIgnored) {
             return
         } else {
             this.lockState = lockState
@@ -159,21 +136,18 @@ class OrientationModule(reactContext: ReactApplicationContext) :
         }
 
         if (lockState == null) {
-            Log.i("FOO HAMZA SAYS Orientation ${invocationCount}", "Returning early because lockState is null")
             return
         }
 
         // When enabled set to last requested orientation.
         val autoRotationEnabled = autoRotateEnabled || autoRotateIgnored
         if (autoRotationEnabled) {
-            Log.i("FOO HAMZA SAYS Orientation ${invocationCount}", "Setting requested orientation to ${lockState} ${lockState.orientationInt}")
             currentActivity?.requestedOrientation = lockState.orientationInt
         }
 
         // When disabled ensure we are unspecified.
         val autoRotationDisabled = !autoRotateEnabled && !autoRotateIgnored
         if  (autoRotationDisabled && lockState != LockState.UNSPECIFIED) {
-            Log.i("FOO HAMZA SAYS Orientation ${invocationCount}", "Resetting to system preference")
             currentActivity?.requestedOrientation = LockState.UNSPECIFIED.orientationInt
         }
     }
