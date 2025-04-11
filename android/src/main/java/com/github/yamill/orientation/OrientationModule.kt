@@ -33,7 +33,14 @@ class OrientationModule(reactContext: ReactApplicationContext) :
 
     private var lockState: LockState? = null
 
+    // Tracks the value of the system rotation lock. When true the layout
+    // should rotate with the phone orientation. When false the layout should
+    // stay locked in the current orientation.
     private var autoRotateEnabled = false
+
+    // Tracks the application's intent to override the system rotation lock.
+    // When true the layout should obey the requested orientation regardless
+    // of the system rotation lock.
     private var autoRotateIgnored = false
 
     override fun getName() = "Orientation"
@@ -120,12 +127,7 @@ class OrientationModule(reactContext: ReactApplicationContext) :
     ) {
         if (this.lockState == lockState &&
             this.autoRotateEnabled == autoRotateEnabled &&
-
-            // If auto-rotate is disabled from the system setting, and we are
-            // updating the orientation lock, we may have to re-apply the
-            // orientation lock with unchanged parameters after backgrounding
-            // and foregrounding the app.
-            !autoRotateIgnored) {
+            this.autoRotateIgnored == autoRotateIgnored) {
             return
         } else {
             this.lockState = lockState
