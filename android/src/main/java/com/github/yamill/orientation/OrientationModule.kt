@@ -12,7 +12,7 @@ import com.github.yamill.orientation.listeners.OrientationConfigListener
 import com.github.yamill.orientation.listeners.OrientationListener
 
 
-class OrientationModule(reactContext: ReactApplicationContext) :
+class OrientationModule(val reactContext: ReactApplicationContext) :
     ReactContextBaseJavaModule(reactContext) {
 
     private enum class LockState(val orientationInt: Int) {
@@ -60,13 +60,13 @@ class OrientationModule(reactContext: ReactApplicationContext) :
         )
         reactContext.addLifecycleEventListener(
             OrientationConfigListener(reactContext) {
-                currentActivity
+                reactContext.currentActivity
             }
         )
 
         reactContext.addLifecycleEventListener(
             OrientationListener(reactContext) {
-                currentActivity;
+                reactContext.currentActivity;
             }
         )
     }
@@ -142,13 +142,13 @@ class OrientationModule(reactContext: ReactApplicationContext) :
         // When enabled set to last requested orientation.
         val autoRotationEnabled = autoRotateEnabled || autoRotateIgnored
         if (autoRotationEnabled) {
-            currentActivity?.requestedOrientation = lockState.orientationInt
+            reactContext.currentActivity?.requestedOrientation = lockState.orientationInt
         }
 
         // When disabled ensure we are unspecified.
         val autoRotationDisabled = !autoRotateEnabled && !autoRotateIgnored
         if  (autoRotationDisabled && lockState != LockState.UNSPECIFIED) {
-            currentActivity?.requestedOrientation = LockState.UNSPECIFIED.orientationInt
+            reactContext.currentActivity?.requestedOrientation = LockState.UNSPECIFIED.orientationInt
         }
     }
 
