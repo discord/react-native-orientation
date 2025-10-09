@@ -27,3 +27,18 @@ project.xcworkspace
 node_modules/
 npm-debug.log
 *.iml
+package-lock.json
+yarn.lock
+
+# AS
+.idea
+local.properties
+android/build/**
+
+# Gradle
+.gradle
+gradle.properties
+gradle-wrapper.jar
+gradle-wrapper.properties
+gradlew
+gradlew.bat

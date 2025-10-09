@@ -1,9 +1,11 @@
 var Orientation = require('react-native').NativeModules.Orientation;
+var Platform = require('react-native').Platform;
 var DeviceEventEmitter = require('react-native').DeviceEventEmitter;
 
 var listeners = {};
 var orientationDidChangeEvent = 'orientationDidChange';
 var specificOrientationDidChangeEvent = 'specificOrientationDidChange';
+var orientationDegreesDidChangeEvent = 'orientationDegreesDidChange';
 
 var id = 0;
 var META = '__listener_id';
@@ -35,6 +37,12 @@ module.exports = {
     });
   },
 
+  ignoreAutoRotate(shouldIgnore) {
+    if (Platform.OS === 'android') {
+      Orientation.ignoreAutoRotate(shouldIgnore);
+    }
+  },
+
   lockToPortrait() {
     Orientation.lockToPortrait();
   },
@@ -60,6 +68,14 @@ module.exports = {
     listeners[key] = DeviceEventEmitter.addListener(orientationDidChangeEvent,
       (body) => {
         cb(body.orientation);
+      });
+  },
+
+  addOrientationDegreesChangeListener(callback) {
+    var key = getKey(callback);
+    listeners[key] = DeviceEventEmitter.addListener(orientationDegreesDidChangeEvent,
+      (body) => {
+        callback(body.orientationDegrees);
       });
   },
 
